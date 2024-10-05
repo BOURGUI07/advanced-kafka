@@ -1,14 +1,14 @@
 0
-55
+54
 __consumer_offsets 13 0
 __consumer_offsets 46 0
-hello-world 0 0
 __consumer_offsets 9 0
 __consumer_offsets 42 0
 __consumer_offsets 21 0
 __consumer_offsets 17 0
 __consumer_offsets 30 0
 __consumer_offsets 26 0
+physical-topic 0 0
 __consumer_offsets 5 0
 __consumer_offsets 38 0
 __consumer_offsets 1 0
@@ -23,17 +23,15 @@ __consumer_offsets 49 0
 __consumer_offsets 0 0
 __consumer_offsets 29 0
 __consumer_offsets 25 0
+processor-out-0 0 0
 __consumer_offsets 8 0
 __consumer_offsets 37 0
 __consumer_offsets 4 0
 __consumer_offsets 33 0
 __consumer_offsets 15 0
 __consumer_offsets 48 0
-input-topic 0 0
 __consumer_offsets 11 0
-output-topic 0 0
 __consumer_offsets 44 0
-order-returns 0 0
 __consumer_offsets 23 0
 __consumer_offsets 19 0
 __consumer_offsets 32 0
@@ -54,4 +52,5 @@ __consumer_offsets 27 0
 __consumer_offsets 39 0
 __consumer_offsets 6 0
 __consumer_offsets 35 0
+digital-topic 0 0
 __consumer_offsets 2 0
