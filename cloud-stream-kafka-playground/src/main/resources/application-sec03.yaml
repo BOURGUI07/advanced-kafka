@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        consumer-in-0: #4- gonna consume what processor produced in output-topic
+          destination: output-topic
+          group: consumer-group
+        producer-out-0: #1- produce items into input-topic
+          destination: input-topic
+        processor-in-0: #2- gonna consume what the producer produced in input-topic
+          destination: input-topic
+          group: processor-group
+        processor-out-0: #3- gonna produce items into output-topic
+          destination: output-topic
+    function:
+      definition: consumer;producer;processor
+

@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        consumer-in-0:  #since it consumes a message, nameOfMethod-in-0
+          destination: input-topic #from where we're gonna get the messages
+          group: some-group
+        function-in-0: #since it consumes a message, nameOfMethod-in-0
+          destination: input-topic #from where we're gonna get the messages
+          group: some-group
+      kafka:
+        bindings:
+          function-in-0: #for this specific binding, I wanna set the properties I'd like
+            consumer:
+              configuration:
+                group.instance.id: "555"
+          consumer-in-0: #for this specific binding, I wanna set the properties I'd like
+            consumer:
+              configuration:
+                group.instance.id: "666"
+
+    function:
+      definition: consumer #Because there are multiple beans, tell Spring we're only interested in function() method now
