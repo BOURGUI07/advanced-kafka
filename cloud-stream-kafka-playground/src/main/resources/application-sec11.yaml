@@ -1,0 +1,31 @@
+spring:
+  cloud:
+    stream:
+      default:
+        producer:
+          useNativeEncoding: true
+      bindings:
+        consumer-in-0:
+          destination: input-topic
+          group: some-group
+      kafka:
+        bindings:
+          consumer-in-0:
+            consumer:
+              configuration:
+                group.instance.id: "666"
+        binder:
+          consumer-properties:
+            "value.deserializer": org.springframework.kafka.support.serializer.JsonDeserializer
+            "auto.offset.reset": "earliest"
+            "group.instance.id": "1"
+            "spring.json.trusted.packages": "com.example.cloud_stream_kafka_playground.sec11.dto"
+ #       binder:
+  #        consumer-properties:
+   #         "key.deserializer": org.apache.kafka.common.serialization.IntegerDeserializer
+    #        "value.deserializer": org.apache.kafka.common.serialization.IntegerDeserializer
+     #       "auto.offset.reset": "earliest"
+      #      "group.instance.id": "1"
+
+    function:
+      definition: consumer
