@@ -1,17 +1,17 @@
 package com.example.cloud_stream_kafka_playground.sec06.processor;
 
 import com.example.cloud_stream_kafka_playground.common.MessageConverter;
+import com.example.cloud_stream_kafka_playground.common.Record;
 import com.example.cloud_stream_kafka_playground.sec06.dto.DigitalDelivery;
 import com.example.cloud_stream_kafka_playground.sec06.dto.OrderEvent;
 import com.example.cloud_stream_kafka_playground.sec06.dto.PhysicalDelivery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
@@ -19,38 +19,42 @@ import java.util.function.Function;
 @Slf4j
 @RequiredArgsConstructor
 public class OrderRouter {
+    private static final String DESTINATION_HEADER = "spring.cloud.stream.sendto.destination";
     private static final String DIGITAL_DELIVERY_CHANNEL = "digital-topic";
     private static final String PHYSICAL_DELIVERY_CHANNEL = "physical-topic";
 
 
-    private final StreamBridge streamBridge;
 
     @Bean
-    public Function<Flux<Message<OrderEvent>>, Mono<Void>> processor(){
+    public Function<Flux<Message<OrderEvent>>, Flux<Message<?>>> processor(){
         return flux -> flux
                 .map(MessageConverter::toRecord)
-                .doOnNext(r->this.route(r.message()))
-                .doOnNext(r->r.acknowledgement().acknowledge())
-                .then();
+                .map(this::route);
     }
 
-    private void route(OrderEvent orderEvent) {
-        switch(orderEvent.type()){
+    private Message<?> route(Record<OrderEvent> record) {
+        var orderEvent = record.message();
+        var msg = switch(orderEvent.type()){
             case DIGITAL -> this.toDigitalDelivery(orderEvent);
             case PHYSICAL -> this.toPhysicalDelivery(orderEvent);
-        }
-
+        };
+        record.acknowledgement().acknowledge();
+        return msg;
     }
 
-    private void toDigitalDelivery(OrderEvent orderEvent) {
+    private Message<DigitalDelivery> toDigitalDelivery(OrderEvent orderEvent) {
         var digitalDelivery = new DigitalDelivery(orderEvent.productId(), orderEvent.customerId()+"@gmail.com");
-        streamBridge.send(DIGITAL_DELIVERY_CHANNEL, digitalDelivery);
+        return MessageBuilder.withPayload(digitalDelivery)
+                .setHeader(DESTINATION_HEADER,DIGITAL_DELIVERY_CHANNEL)
+                .build();
     }
 
-    private void toPhysicalDelivery(OrderEvent orderEvent) {
+    private Message<PhysicalDelivery> toPhysicalDelivery(OrderEvent orderEvent) {
         var customerId = orderEvent.customerId();
-        var digitalDelivery = new PhysicalDelivery(orderEvent.productId(), customerId+"Streat",customerId+"City",customerId+"Country");
-        streamBridge.send(PHYSICAL_DELIVERY_CHANNEL, digitalDelivery);
+        var physicalDelivery = new PhysicalDelivery(orderEvent.productId(), customerId+"Streat",customerId+"City",customerId+"Country");
+        return MessageBuilder.withPayload(physicalDelivery)
+                .setHeader(DESTINATION_HEADER,PHYSICAL_DELIVERY_CHANNEL)
+                .build();
     }
 
 }
