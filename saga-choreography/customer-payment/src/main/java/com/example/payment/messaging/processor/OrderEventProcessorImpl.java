@@ -50,8 +50,4 @@ public class OrderEventProcessorImpl implements OrderEventProcessor<PaymentEvent
                 .doOnNext(event->log.info("REFUND PROCESSED: {}", event))
                 .doOnError(ex->log.info("ERROR WHILE PROCESSING REFUND: {}", ex.getMessage()));
     }
-
-
-
-
 }
