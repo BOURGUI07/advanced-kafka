@@ -7,10 +7,10 @@ import reactor.kafka.receiver.ReceiverOffset;
 import java.lang.Record;
 
 public class MessageConverter {
-    public static <T> java.lang.Record<T> toRecord(Message<T> message) {
+    public static <T> MessageRecord<T> toRecord(Message<T> message) {
         var payload = message.getPayload();
         var key = message.getHeaders().get(KafkaHeaders.RECEIVED_KEY, String.class);
         var ack = message.getHeaders().get(KafkaHeaders.ACKNOWLEDGMENT, ReceiverOffset.class);
-        return new Record<>(key, payload, ack);
+        return new MessageRecord<>(key, payload, ack);
     }
 }
